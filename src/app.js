@@ -36,21 +36,30 @@ app.put("/repositories/:id", (request, response) => {
 
   const repositoryIndex = repositories.findIndex(repository => repository.id === id);
 
-  if(repositoryIndex === -1){
+  if(repositoryIndex < 0){
     return response.status(400).json({error: 'Repository does exists.'});
   }
 
+  repositories[repositoryIndex] = {
+    id, 
+    title: title ? title : repositories[repositoryIndex].title, //se existir um novo títolo retorne ele, se não, retorne a informação que já existia no vetor 
+    url: url ? url : repositories[repositoryIndex].url,
+    techs: techs ? techs : repositories[repositoryIndex].techs,
+    likes: repositories[repositoryIndex].likes //mantem os likes que tinham antes
+  } 
+  /* Forma sem os if's e utilizando uma constante para salvar os dados do vetor
   const repository = {
     id,
     title,
     url,
     techs,
     likes: repositories[repositoryIndex].likes,
-  };
-
+  }; 
   repositories[repositoryIndex] = repository
-  
   return response.json(repository);
+  */
+  
+  return response.json(repositories[repositoryIndex]);
 });
 
 app.delete("/repositories/:id", (request, response) => {
@@ -59,7 +68,7 @@ app.delete("/repositories/:id", (request, response) => {
   const repositoryIndex = repositories.findIndex(repository => repository.id === id);
 
   if (repositoryIndex > -1){
-    repositories.splice(repositoryIndex, 1);
+    repositories.splice(repositoryIndex, 1); //splice remove apenas 1 repositório encontrado, ou seja, remove ele mesmo
   } else {
     return response.status(400).send();
   }
