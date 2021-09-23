@@ -15,14 +15,14 @@ app.get("/repositories", (request, response) => {
 });
 
 app.post("/repositories", (request, response) => {
-  const {title, url, techs} = requery.body;
+  const {title, url, techs} = request.body;
 
   const repository = {
     id: uuid(),
     title,
     url,
     techs,
-    likes: 0,
+    likes: 0
   };
 
   repositories.push(repository);
@@ -58,10 +58,10 @@ app.delete("/repositories/:id", (request, response) => {
 
   const repositoryIndex = repositories.findIndex(repository => repository.id === id);
 
-  if (repositoryIndex >= 0){
+  if (repositoryIndex > -1){
     repositories.splice(repositoryIndex, 1);
   } else {
-    return response.status(400).json({error: 'The repository does not exist'});
+    return response.status(400).send();
   }
 
   return response.status(204).send();
